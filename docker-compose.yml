@@ -1,0 +1,82 @@
+version: "3.4"
+networks:
+  insuranceapi:
+
+services:
+
+  app:
+    image: nginx:stable-alpine
+    container_name: nginx_proxy
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on: 
+      - identity_api
+    ports:
+      - 3000:3000
+    networks:
+      - insuranceapi
+    
+    deploy:
+      resources:
+        limits:
+          cpus: "0.4"
+          memory: "400MB"
+  
+  identity_api:
+    build: ./identity-api
+    container_name: identity-api
+    restart: always
+    volumes:
+      - ./identity-api:/usr/src/identity-api
+      - /usr/src/identity-api/node_modules
+    ports:
+      - 3030:3030
+    depends_on: 
+      - mysql
+    networks:
+      - insuranceapi
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "1000MB"
+
+  pricing_api:
+    build: ./pricing-api
+    container_name: pricing-api
+    restart: always
+    volumes:
+      - ./pricing-api:/usr/src/pricing-api
+      - /usr/src/pricing-api/node_modules
+    depends_on: 
+      - mysql
+    networks:
+      - insuranceapi
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "1000MB"
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    container_name: databases
+    environment:
+      MYSQL_USER: 'rlino'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - /home/tmp/mysql/insurance:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d/:ro
+    networks:
+      - insuranceapi
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "1000MB"

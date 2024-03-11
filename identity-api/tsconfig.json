@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"types": [
+			"node", "jest", "reflect-metadata"
+		],
+		"moduleResolution": "node",
+		"strict": true,
+		"sourceMap": true,
+		"outDir": "./build",
+		"strictPropertyInitialization": false,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"esModuleInterop": true,
+		"inlineSources": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"target": "ES2021",
+		"module": "commonjs",
+		"rootDir": "./",
+		"forceConsistentCasingInFileNames": true,
+	}
+}
