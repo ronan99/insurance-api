@@ -18,9 +18,9 @@
 		"emitDecoratorMetadata": true,
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
-		"target": "ES2021",
+		"target": "ESNext",
 		"module": "commonjs",
 		"rootDir": "./",
-		"forceConsistentCasingInFileNames": true,
+		"forceConsistentCasingInFileNames": true
 	}
 }

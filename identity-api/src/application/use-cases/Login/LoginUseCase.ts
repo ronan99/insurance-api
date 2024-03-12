@@ -18,9 +18,7 @@ export class LoginUseCase {
 	async execute(data: ILoginRequestDTO): Promise<ILoginResponseDTO> {
 		const user = await this.usersRepository.findByUsername(data.username)
 
-		if (!user) {
-			throw new ValidationError('Nome ou senha inválidos', StatusCodes.UNAUTHORIZED)
-		}
+		if (!user) throw new ValidationError('Nome ou senha inválidos', StatusCodes.UNAUTHORIZED)
 
 		if (!(await bcrypt.compare(data.password, user.password))) {
 			throw new ValidationError('Nome ou senha inválidos', StatusCodes.UNAUTHORIZED)

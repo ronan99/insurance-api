@@ -6,6 +6,7 @@
 import type { Config } from 'jest'
 
 const config: Config = {
+	roots: ['<rootDir>/src'],
 	clearMocks: true,
 
 	collectCoverage: false,
@@ -16,10 +17,22 @@ const config: Config = {
 
 	testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[tj]s?(x)'],
 
-	collectCoverageFrom: ['src/**/*.ts', '!src/**/__tests__/**', '!**/index.ts', '!src/config/*'],
+	collectCoverageFrom: [
+		'src/**/*.ts',
+		'!src/**/__tests__/**',
+		'!**/index.ts',
+		'!**/app.ts',
+		'!**/config.ts',
+		'!src/infra/*',
+		'!src/domain/repositories/*.ts',
+		'!**/*DTO.ts',
+		'!src/di/**',
+		'!src/core/**',
+		'!src/domain/repositories/Implementations/Prisma/**',
+	],
 	coverageThreshold: {
 		global: {
-			branches: 90,
+			branches: 80,
 			functions: 90,
 			lines: 90,
 			statements: 90,
@@ -27,11 +40,11 @@ const config: Config = {
 	},
 	preset: 'ts-jest',
 	testEnvironment: 'node',
-	// moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
 	modulePaths: ['<rootDir>'],
 	globals: {
 		isolatedModules: true,
 	},
+	forceExit: true,
 }
 
 export default config

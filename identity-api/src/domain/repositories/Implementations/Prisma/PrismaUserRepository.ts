@@ -1,21 +1,30 @@
-import 'reflect-metadata'
-
 import { Prisma } from '@prisma/client'
 import bcrypt from 'bcrypt'
-import { injectable } from 'inversify'
 import UserEntity from '../../../entities/UserEntity'
 import { IUserRepository } from '../../IUserRepository'
-import { PrismaService } from './PrismaService'
+import { PrismaBaseRepository } from './PrismaBaseRepository'
 
-@injectable()
-export class PrismaUserRepository implements IUserRepository {
-	// constructor(private prisma: PrismaClient) {}
-	delete(id: string | number): Promise<boolean> {
-		throw new Error('Method not implemented.' + id)
+export class PrismaUserRepository extends PrismaBaseRepository implements IUserRepository {
+	async delete(id: string | number): Promise<boolean> {
+		const userToUpdate = await this.prisma.user.findUnique({ where: { id: id.toString() } })
+
+		if (!userToUpdate) return false
+
+		const userUpdated = await this.prisma.user.update({
+			where: {
+				id: id.toString(),
+			},
+			data: {
+				deleted: true,
+			},
+		})
+		if (!userUpdated) return false
+
+		return true
 	}
 
 	async findById(id: string): Promise<UserEntity | null> {
-		const userDb = await PrismaService.user.findUnique({
+		const userDb = await this.prisma.user.findUnique({
 			where: { id, deleted: false },
 		})
 
@@ -28,7 +37,7 @@ export class PrismaUserRepository implements IUserRepository {
 
 	async save(user: UserEntity): Promise<UserEntity> {
 		user.password = await bcrypt.hash(user.password, 10)
-		const data = await PrismaService.user.create({
+		const data = await this.prisma.user.create({
 			data: user as Prisma.UserCreateInput,
 		})
 
@@ -36,7 +45,7 @@ export class PrismaUserRepository implements IUserRepository {
 	}
 
 	async findByUsername(username: string): Promise<UserEntity | null> {
-		const user = await PrismaService.user.findFirst({
+		const user = await this.prisma.user.findFirst({
 			where: {
 				username: username,
 				deleted: false,
@@ -47,11 +56,11 @@ export class PrismaUserRepository implements IUserRepository {
 	}
 
 	async update(user: UserEntity, id: string | number): Promise<UserEntity | null> {
-		const userToUpdate = await PrismaService.user.findUnique({ where: { id: id.toString() } })
+		const userToUpdate = await this.prisma.user.findUnique({ where: { id: id.toString() } })
 
 		if (!userToUpdate) return null
 
-		const userSaved = await PrismaService.user.update({
+		const userSaved = await this.prisma.user.update({
 			where: {
 				id: id.toString(),
 			},

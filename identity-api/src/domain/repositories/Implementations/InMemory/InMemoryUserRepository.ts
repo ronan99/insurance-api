@@ -20,7 +20,6 @@ export class InMemoryUserRepository implements IUserRepository {
 	async save(user: UserEntity): Promise<UserEntity> {
 		user.password = await bcrypt.hash(user.password, 10)
 		this.users.push(user)
-		// console.table(this.users)
 		return Promise.resolve(user)
 	}
 

@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import jwt, { JwtPayload } from 'jsonwebtoken'
-import { InMemoryUserRepository } from '../../domain/repositories/Implementations/InMemory/InMemoryUserRepository'
 
 export default async function UserAuth(req: Request, res: Response, next: NextFunction) {
 	const authSecret = <string>process.env.AUTH_SECRET
@@ -20,11 +19,8 @@ export default async function UserAuth(req: Request, res: Response, next: NextFu
 		}
 		if (authSecret) {
 			try {
-				const userRepository = new InMemoryUserRepository()
 				const decoded = <JwtPayload>jwt.verify(token, authSecret)
 				if (!decoded) return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Token inválido!' })
-				const response = await userRepository.findById(decoded.id)
-				if (!response) return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Usuário não encontrado!' })
 			} catch (error) {
 				return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Ocorreu um erro, contate o administrador!' })
 			}

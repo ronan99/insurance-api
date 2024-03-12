@@ -4,6 +4,7 @@ import { inject, injectable } from 'inversify'
 import ValidationError from '../../../core/errors/Types/ValidationError'
 import { failResponse, successResponse } from '../../../core/shared/Response'
 import { Types } from '../../../di/types'
+import Sanitizer from '../../validators/Common/Sanitizer'
 import { LoginUseCase } from './LoginUseCase'
 
 @injectable()
@@ -17,12 +18,16 @@ export class LoginController {
 		const { username, password } = req.body
 
 		try {
-			const result = await this.loginUseCase.execute({ username, password })
+			const data = {
+				username: Sanitizer.sanitizeString(username),
+				password: Sanitizer.sanitizeString(password),
+			}
+			const result = await this.loginUseCase.execute(data)
 
 			return res.status(StatusCodes.CREATED).json(successResponse(result))
 		} catch (err) {
 			if (err instanceof ValidationError) return res.status(err.statusCode).json(failResponse(err.message, err.statusCode))
-			return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(failResponse('Um erro interno ocorreu'))
+			throw err
 		}
 	}
 }

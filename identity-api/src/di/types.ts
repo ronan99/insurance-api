@@ -1,6 +1,7 @@
 export const Types = {
 	IUserRepository: Symbol.for('IUserRepository'),
 	ICoverageRepository: Symbol.for('ICoverageRepository'),
+	PrismaUserRepository: Symbol.for('PrismaUserRepository'),
 
 	ChangeUserRoleController: Symbol.for('ChangeUserRoleController'),
 	CreateUserController: Symbol.for('CreateUserController'),

@@ -4,6 +4,9 @@ import { inject, injectable } from 'inversify'
 import ValidationError from '../../../core/errors/Types/ValidationError'
 import { failResponse, successResponse } from '../../../core/shared/Response'
 import { Types } from '../../../di/types'
+import RoleValidator from '../../validators/Common/RoleValidator'
+import Sanitizer from '../../validators/Common/Sanitizer'
+import PasswordValidator from '../../validators/CreateUser/PasswordValidator'
 import { CreateUserUseCase } from './CreateUserUseCase'
 
 @injectable()
@@ -15,9 +18,13 @@ export class CreateUserController {
 
 	async handle(req: Request, res: Response): Promise<Response> {
 		const { username, password, role } = req.body
-
 		try {
-			const result = await this.createUserUseCase.execute({ username, password, role })
+			const passValidator = new PasswordValidator()
+			const roleValidator = new RoleValidator()
+			passValidator.validate(password)
+			roleValidator.validate(role)
+
+			const result = await this.createUserUseCase.execute({ username: Sanitizer.sanitizeString(username), password, role })
 
 			return res.status(StatusCodes.CREATED).json(successResponse(result))
 		} catch (err) {

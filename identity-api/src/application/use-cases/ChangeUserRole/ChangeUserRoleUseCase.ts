@@ -23,7 +23,7 @@ export class ChangeUserRoleUseCase {
 		const result = await this.usersRepository.update(user, user.id)
 
 		if (!result) {
-			throw new Error('Um erro ocorreu ao tentar atualizar a função do usuário')
+			throw new ValidationError('Um erro ocorreu ao tentar atualizar a função do usuário', StatusCodes.INTERNAL_SERVER_ERROR)
 		}
 
 		return {

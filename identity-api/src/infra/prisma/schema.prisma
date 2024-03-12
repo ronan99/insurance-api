@@ -26,13 +26,3 @@ model User {
     role     Roles
     deleted  Boolean @default(false)
 }
-
-model Coverage {
-    id          String @id @default(uuid())
-    name        String @unique
-    description String
-    capital     BigInt
-    premium     BigInt
-
-    deleted Boolean
-}
