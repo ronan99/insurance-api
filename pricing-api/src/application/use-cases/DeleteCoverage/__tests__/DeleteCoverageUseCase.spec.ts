@@ -1,3 +1,4 @@
+import ValidationError from '../../../../core/errors/Types/ValidationError'
 import { InMemoryCoverageRepository } from '../../../../domain/repositories/Implementations/InMemory/InMemoryCoverageRepository'
 import { CreateCoverageUseCase } from '../../CreateCoverage/CreateCoverageUseCase'
 import { DeleteCoverageUseCase } from '../DeleteCoverageUseCase'
@@ -28,5 +29,13 @@ describe('Delete coverage use case', () => {
 		const response = await deleteCoverageUseCase.execute(coverage.coverageId)
 
 		expect(response).toBeTruthy()
+	})
+	test('Should give not found for coverage not ofund', async () => {
+		const inMemoryCoverageRepository = new InMemoryCoverageRepository()
+		const deleteCoverageUseCase = new DeleteCoverageUseCase(inMemoryCoverageRepository)
+
+		expect(async () => {
+			await deleteCoverageUseCase.execute('randomid')
+		}).rejects.toThrow(ValidationError)
 	})
 })

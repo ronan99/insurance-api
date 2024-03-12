@@ -26,6 +26,19 @@ describe('CoverageEntity', () => {
 				new CoverageEntity(coverageProps)
 			}).toThrow(ValidationError)
 		})
+		test('Should not create a coverage entity, capital error bigger than maximum', async () => {
+			const coverageProps = {
+				name: 'Coverage name fake',
+				description: 'Coverage test description fake',
+				capital: 1000000000,
+				premium: 3,
+			}
+
+			expect(() => {
+				new CoverageEntity(coverageProps)
+			}).toThrow(ValidationError)
+		})
+
 		test('Should not create a coverage entity, premium error', async () => {
 			const coverageProps = {
 				name: 'Coverage name fake',

@@ -4,7 +4,8 @@ import { inject, injectable } from 'inversify'
 import ValidationError from '../../../core/errors/Types/ValidationError'
 import { failResponse, successResponse } from '../../../core/shared/Response'
 import { Types } from '../../../di/types'
-import { ICreateCoverageRequestDTO } from './CreateCoverageDTO'
+import Sanitizer from '../../validators/Common/Sanitizer'
+import CoverageValidator from '../../validators/CreateCoverage/CoverageValidator'
 import { CreateCoverageUseCase } from './CreateCoverageUseCase'
 
 @injectable()
@@ -15,10 +16,16 @@ export class CreateCoverageController {
 	) {}
 
 	async handle(req: Request, res: Response): Promise<Response> {
-		const data = req.body as ICreateCoverageRequestDTO
-
+		const capital = Sanitizer.sanitizeNumber(req.body.capital)
+		const premium = Sanitizer.sanitizeNumber(req.body.premium)
+		const name = Sanitizer.sanitizeString(req.body.name)
+		const description = Sanitizer.sanitizeString(req.body.description)
 		try {
-			const result = await this.createCoverageUseCase.execute(data)
+			const validator = new CoverageValidator()
+			validator.validateCapital(capital)
+			validator.validatePremium(premium, capital)
+
+			const result = await this.createCoverageUseCase.execute({ capital, premium, name, description })
 
 			return res.status(StatusCodes.CREATED).json(successResponse(result))
 		} catch (err) {

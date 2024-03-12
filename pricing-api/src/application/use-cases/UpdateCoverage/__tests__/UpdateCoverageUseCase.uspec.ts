@@ -24,14 +24,13 @@ describe('Update coverage use case', () => {
 	test('Should update a coverage sucessfully', async () => {
 		const inMemoryCoverageRepository = new InMemoryCoverageRepository()
 		const createCoverageUseCase = new CreateCoverageUseCase(inMemoryCoverageRepository)
-		await createCoverageUseCase.execute(coverageSaved)
+		const coverage = await createCoverageUseCase.execute(coverageSaved)
 
 		const updateCoverageUseCase = new UpdateCoverageUseCase(inMemoryCoverageRepository)
 
 		coverageSaved.description = 'updated description'
 		coverageSaved.capital = 20000
-		const response = await updateCoverageUseCase.execute(coverageSaved)
-		console.table([response, coverageSaved])
+		const response = await updateCoverageUseCase.execute(coverage.coverageId as string, coverageSaved)
 		expect(response).toMatchObject(coverageSaved)
 	})
 
@@ -39,12 +38,12 @@ describe('Update coverage use case', () => {
 		const inMemoryCoverageRepository = new InMemoryCoverageRepository()
 
 		const createCoverageUseCase = new CreateCoverageUseCase(inMemoryCoverageRepository)
-		await createCoverageUseCase.execute(coverageSaved)
+		const coverage = await createCoverageUseCase.execute(coverageSaved)
 
 		const updateCoverageUseCase = new UpdateCoverageUseCase(inMemoryCoverageRepository)
 		coverageSaved.capital = 500
 		expect(async () => {
-			await updateCoverageUseCase.execute(coverageSaved)
+			await updateCoverageUseCase.execute(coverage.coverageId as string, coverageSaved)
 		}).rejects.toThrow(ValidationError)
 	})
 
@@ -52,12 +51,12 @@ describe('Update coverage use case', () => {
 		const inMemoryCoverageRepository = new InMemoryCoverageRepository()
 
 		const createCoverageUseCase = new CreateCoverageUseCase(inMemoryCoverageRepository)
-		await createCoverageUseCase.execute(coverageSaved)
+		const coverage = await createCoverageUseCase.execute(coverageSaved)
 
 		const updateCoverageUseCase = new UpdateCoverageUseCase(inMemoryCoverageRepository)
 		coverageSaved.premium = 5000
 		expect(async () => {
-			await updateCoverageUseCase.execute(coverageSaved)
+			await updateCoverageUseCase.execute(coverage.coverageId as string, coverageSaved)
 		}).rejects.toThrow(ValidationError)
 	})
 
@@ -65,12 +64,12 @@ describe('Update coverage use case', () => {
 		const inMemoryCoverageRepository = new InMemoryCoverageRepository()
 
 		const createCoverageUseCase = new CreateCoverageUseCase(inMemoryCoverageRepository)
-		await createCoverageUseCase.execute(coverageSaved)
+		const coverage = await createCoverageUseCase.execute(coverageSaved)
 
 		const updateCoverageUseCase = new UpdateCoverageUseCase(inMemoryCoverageRepository)
 		coverageSaved.name = 'randomname'
 		expect(async () => {
-			await updateCoverageUseCase.execute(coverageSaved)
+			await updateCoverageUseCase.execute(coverage.coverageId as string, coverageSaved)
 		}).rejects.toThrow(ValidationError)
 	})
 
@@ -91,7 +90,7 @@ describe('Update coverage use case', () => {
 			premium: 2000,
 		}
 
-		const response = await updateCoverageUseCase.execute(newCoverage)
+		const response = await updateCoverageUseCase.execute(coverageToDelete.coverageId as string, newCoverage)
 		expect(response).toMatchObject(newCoverage)
 	})
 })

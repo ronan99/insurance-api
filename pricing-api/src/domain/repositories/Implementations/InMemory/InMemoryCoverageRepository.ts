@@ -37,7 +37,14 @@ export class InMemoryCoverageRepository implements ICoverageRepository {
 		return Promise.resolve(coverage)
 	}
 
-	async findByNameDeleted(name: string): Promise<CoverageEntity | null> {
+	async findByIdWithDeleted(id: string): Promise<CoverageEntity | null> {
+		const coverage = this.coverages.find((coverage) => coverage.id === id)
+
+		if (!coverage) return Promise.resolve(null)
+
+		return Promise.resolve(coverage)
+	}
+	async findByNameWithDeleted(name: string): Promise<CoverageEntity | null> {
 		const coverage = this.coverages.find((coverage) => coverage.name === name)
 
 		if (!coverage) return Promise.resolve(null)
@@ -54,5 +61,19 @@ export class InMemoryCoverageRepository implements ICoverageRepository {
 		}
 
 		return Promise.resolve(false)
+	}
+
+	async findByIdList(ids: string[] | number[]): Promise<CoverageEntity[] | null> {
+		const result: CoverageEntity[] = []
+
+		for (let id of ids) {
+			const foundCoverage = this.coverages.find((coverage) => coverage.id === id)
+			if (foundCoverage) {
+				result.push(foundCoverage)
+			}
+		}
+
+		if (!result.length) return Promise.resolve(null)
+		return Promise.resolve(result)
 	}
 }

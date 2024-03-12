@@ -4,25 +4,21 @@ import { inject, injectable } from 'inversify'
 import ValidationError from '../../../core/errors/Types/ValidationError'
 import { failResponse, successResponse } from '../../../core/shared/Response'
 import { Types } from '../../../di/types'
-import Sanitizer from '../../validators/Common/Sanitizer'
-import { UpdateCoverageUseCase } from './UpdateCoverageUseCase'
+import { ICalculateQuoteRequestDTO } from './CalculateQuoteDTO'
+import { CalculateQuoteUseCase } from './CalculateQuoteUseCase'
 
 @injectable()
-export class UpdateCoverageController {
+export class CalculateQuoteController {
 	constructor(
-		@inject(Types.UpdateCoverageUseCase)
-		private updateCoverageUseCase: UpdateCoverageUseCase,
+		@inject(Types.CalculateQuoteUseCase)
+		private calculateQuoteUseCase: CalculateQuoteUseCase,
 	) {}
 
 	async handle(req: Request, res: Response): Promise<Response> {
-		const id = Sanitizer.sanitizeString(req.params.id)
-		const capital = Sanitizer.sanitizeNumber(req.body.capital)
-		const premium = Sanitizer.sanitizeNumber(req.body.premium)
-		const name = Sanitizer.sanitizeString(req.body.name)
-		const description = Sanitizer.sanitizeString(req.body.description)
+		const data = req.body as ICalculateQuoteRequestDTO
 
 		try {
-			const result = await this.updateCoverageUseCase.execute(id, { capital, premium, name, description })
+			const result = await this.calculateQuoteUseCase.execute(data)
 
 			return res.status(StatusCodes.OK).json(successResponse(result))
 		} catch (err) {
