@@ -28,7 +28,8 @@ const config: Config = {
 		'!**/*DTO.ts',
 		'!src/di/**',
 		'!src/core/**',
-		'!src/domain/repositories/Implementations/Prisma/**',
+		'!src/domain/repositories/Implementations/**',
+		'!src/infra/prisma/**',
 	],
 	coverageThreshold: {
 		global: {
@@ -44,7 +45,6 @@ const config: Config = {
 	globals: {
 		isolatedModules: true,
 	},
-	forceExit: true,
 }
 
 export default config

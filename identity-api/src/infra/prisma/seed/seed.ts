@@ -16,7 +16,16 @@ async function main() {
 			role: Roles.ADMIN,
 		},
 	})
-	console.log(admin)
+	const user = await prisma.user.upsert({
+		where: { username: 'stone user' },
+		update: {},
+		create: {
+			username: 'stone user',
+			password: pass,
+			role: Roles.USER,
+		},
+	})
+	console.table([admin, user])
 }
 main()
 	.then(async () => {

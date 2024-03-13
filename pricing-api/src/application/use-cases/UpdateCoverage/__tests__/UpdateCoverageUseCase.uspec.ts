@@ -64,12 +64,12 @@ describe('Update coverage use case', () => {
 		const inMemoryCoverageRepository = new InMemoryCoverageRepository()
 
 		const createCoverageUseCase = new CreateCoverageUseCase(inMemoryCoverageRepository)
-		const coverage = await createCoverageUseCase.execute(coverageSaved)
+		await createCoverageUseCase.execute(coverageSaved)
 
 		const updateCoverageUseCase = new UpdateCoverageUseCase(inMemoryCoverageRepository)
 		coverageSaved.name = 'randomname'
 		expect(async () => {
-			await updateCoverageUseCase.execute(coverage.coverageId as string, coverageSaved)
+			await updateCoverageUseCase.execute('randomid', coverageSaved)
 		}).rejects.toThrow(ValidationError)
 	})
 
@@ -92,5 +92,34 @@ describe('Update coverage use case', () => {
 
 		const response = await updateCoverageUseCase.execute(coverageToDelete.coverageId as string, newCoverage)
 		expect(response).toMatchObject(newCoverage)
+	})
+
+	test('Should give name error when editing an deactivade coverage', async () => {
+		const inMemoryCoverageRepository = new InMemoryCoverageRepository()
+
+		const createCoverageUseCase = new CreateCoverageUseCase(inMemoryCoverageRepository)
+		const coverageToDelete = await createCoverageUseCase.execute(coverageSaved)
+
+		await createCoverageUseCase.execute({
+			name: 'fake duplicate name',
+			description: 'Coverage test description fake',
+			capital: 10000,
+			premium: 2000,
+		})
+
+		const deleteCoverageUseCase = new DeleteCoverageUseCase(inMemoryCoverageRepository)
+		await deleteCoverageUseCase.execute(coverageToDelete.coverageId)
+
+		const updateCoverageUseCase = new UpdateCoverageUseCase(inMemoryCoverageRepository)
+		const newCoverage = {
+			name: 'fake duplicate name',
+			description: 'Coverage test description fake',
+			capital: 10000,
+			premium: 2000,
+		}
+
+		expect(async () => {
+			await updateCoverageUseCase.execute(coverageToDelete.coverageId as string, newCoverage)
+		}).rejects.toThrow(ValidationError)
 	})
 })

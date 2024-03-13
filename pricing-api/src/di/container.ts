@@ -12,8 +12,8 @@ import { UpdateCoverageController } from '../application/use-cases/UpdateCoverag
 import { UpdateCoverageUseCase } from '../application/use-cases/UpdateCoverage/UpdateCoverageUseCase'
 import { ICoverageRepository } from '../domain/repositories/ICoverageRepository'
 import { IOccupationRepository } from '../domain/repositories/IOccupationRepository'
-import { InMemoryOccupationRepository } from '../domain/repositories/Implementations/InMemory/InMemoryOccupationRepository'
 import PrismaCoverageRepository from '../domain/repositories/Implementations/Prisma/PrismaCoverageRepository'
+import PrismaOccupationRepository from '../domain/repositories/Implementations/Prisma/PrismaOccupationRepository'
 import { Types } from './types'
 
 export const container = new Container({ defaultScope: 'Singleton' })
@@ -22,7 +22,7 @@ export const container = new Container({ defaultScope: 'Singleton' })
 // container.bind<ICoverageRepository>(Types.ICoverageRepository).to(InMemoryCoverageRepository)
 // container.bind<IOccupationRepository>(Types.IOccupationRepository).to(InMemoryOccupationRepository)
 container.bind<ICoverageRepository>(Types.ICoverageRepository).to(PrismaCoverageRepository)
-container.bind<IOccupationRepository>(Types.IOccupationRepository).to(InMemoryOccupationRepository)
+container.bind<IOccupationRepository>(Types.IOccupationRepository).to(PrismaOccupationRepository)
 
 container.bind<CreateCoverageController>(Types.CreateCoverageController).to(CreateCoverageController)
 container.bind<UpdateCoverageController>(Types.UpdateCoverageController).to(UpdateCoverageController)

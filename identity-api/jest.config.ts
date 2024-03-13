@@ -29,6 +29,7 @@ const config: Config = {
 		'!src/di/**',
 		'!src/core/**',
 		'!src/domain/repositories/Implementations/Prisma/**',
+		'!src/infra/prisma/**',
 	],
 	coverageThreshold: {
 		global: {
@@ -44,7 +45,6 @@ const config: Config = {
 	globals: {
 		isolatedModules: true,
 	},
-	forceExit: true,
 }
 
 export default config

@@ -6,7 +6,7 @@ import { loginController } from '../use-cases/Login'
 
 const router = Router()
 
-router.post('/', (req, res) => createUserController.handle(req, res))
+router.post('/', AdminAuth, (req, res) => createUserController.handle(req, res))
 router.patch('/:id', AdminAuth, (req, res) => changeUserRoleController.handle(req, res))
 
 router.post('/login', (req, res) => loginController.handle(req, res))

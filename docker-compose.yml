@@ -3,24 +3,29 @@ networks:
   insuranceapi:
 
 services:
+  mysql:
+    image: mysql:8.0
+    restart: always
+    container_name: databases
+    environment:
+      MYSQL_USER: 'rlino'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
 
-  app:
-    image: nginx:stable-alpine
-    container_name: nginx_proxy
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-    depends_on: 
-      - identity_api
     ports:
-      - 3000:3000
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - /home/tmp/mysql/insurance:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d/:ro
     networks:
       - insuranceapi
-    
     deploy:
       resources:
         limits:
-          cpus: "0.4"
-          memory: "400MB"
+          cpus: "0.6"
+          memory: "1200MB"
   
   identity_api:
     build: ./identity-api
@@ -38,45 +43,52 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"
-          memory: "1000MB"
+          cpus: "0.4"
+          memory: "900MB"
 
-  pricing_api:
+  app:
+    image: nginx:stable-alpine
+    container_name: nginx_proxy
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on: 
+      - pricing_api01
+      - pricing_api02
+    ports:
+      - 3000:3000
+    networks:
+      - insuranceapi
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "100MB"
+
+  pricing_api01: &api
     build: ./pricing-api
-    container_name: pricing-api
+    container_name: pricing-api01
     restart: always
     volumes:
       - ./pricing-api:/usr/src/pricing-api
       - /usr/src/pricing-api/node_modules
-    depends_on: 
+    depends_on:
       - mysql
     networks:
       - insuranceapi
+    environment:
+      - APPLY_SEED=true
     deploy:
       resources:
         limits:
-          cpus: "1"
-          memory: "1000MB"
+          cpus: "0.4"
+          memory: "800MB"
 
-  mysql:
-    image: mysql:8.0
-    restart: always
-    container_name: databases
-    environment:
-      MYSQL_USER: 'rlino'
-      MYSQL_PASSWORD: 'password'
-      MYSQL_ROOT_PASSWORD: 'password'
-    ports:
-      - '3306:3306'
-    expose:
-      - '3306'
-    volumes:
-      - /home/tmp/mysql/insurance:/var/lib/mysql
-      - ./init:/docker-entrypoint-initdb.d/:ro
+  pricing_api02:
+    <<: *api
+    container_name: pricing-api02
     networks:
       - insuranceapi
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: "1000MB"
+    environment:
+      - APPLY_SEED=false
+    depends_on:
+      - mysql

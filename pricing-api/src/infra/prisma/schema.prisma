@@ -19,8 +19,8 @@ model Coverage {
 
 model Occupation {
     id     String  @id @default(uuid())
-    code   String
+    code   String  @unique
     name   String
-    active Boolean @default(false)
+    active Boolean @default(true)
     factor Float
 }

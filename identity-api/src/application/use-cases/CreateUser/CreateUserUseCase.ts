@@ -4,6 +4,8 @@ import ValidationError from '../../../core/errors/Types/ValidationError'
 import { Types } from '../../../di/types'
 import UserEntity from '../../../domain/entities/UserEntity'
 import { IUserRepository } from '../../../domain/repositories/IUserRepository'
+import RoleValidator from '../../validators/Common/RoleValidator'
+import PasswordValidator from '../../validators/CreateUser/PasswordValidator'
 import { ICreateUserRequestDTO, ICreateUserResponseDTO } from './CreateUserDTO'
 
 @injectable()
@@ -15,6 +17,11 @@ export class CreateUserUseCase {
 
 	async execute(data: ICreateUserRequestDTO): Promise<ICreateUserResponseDTO> {
 		const userAlreadyExists = await this.usersRepository.findByUsername(data.username)
+
+		const passValidator = new PasswordValidator()
+		const roleValidator = new RoleValidator()
+		passValidator.validate(data.password)
+		roleValidator.validate(data.role)
 
 		if (userAlreadyExists) {
 			throw new ValidationError('Usuário já existe com este nome', StatusCodes.CONFLICT)

@@ -66,8 +66,8 @@ export default class CoverageEntity {
 		this.id = props.id || randomUUID()
 		this.name = props.name
 		this.description = props.description
-		this._capital = props.capital
-		this._premium = props.premium
+		this.capital = props.capital
+		this.premium = props.premium
 		this.deleted = props.deleted ?? false
 	}
 }

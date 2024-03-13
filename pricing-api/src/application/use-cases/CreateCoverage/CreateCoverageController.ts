@@ -16,11 +16,11 @@ export class CreateCoverageController {
 	) {}
 
 	async handle(req: Request, res: Response): Promise<Response> {
-		const capital = Sanitizer.sanitizeNumber(req.body.capital)
-		const premium = Sanitizer.sanitizeNumber(req.body.premium)
-		const name = Sanitizer.sanitizeString(req.body.name)
-		const description = Sanitizer.sanitizeString(req.body.description)
 		try {
+			const capital = Sanitizer.sanitizeNumber(req.body.capital)
+			const premium = Sanitizer.sanitizeNumber(req.body.premium)
+			const name = Sanitizer.sanitizeString(req.body.name)
+			const description = Sanitizer.sanitizeString(req.body.description)
 			const validator = new CoverageValidator()
 			validator.validateCapital(capital)
 			validator.validatePremium(premium, capital)

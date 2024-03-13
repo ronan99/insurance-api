@@ -21,4 +21,13 @@ describe('Sanitizer', () => {
 		expect(typeof result).toBe('number')
 		expect(result).toBe(1234)
 	})
+
+	test('Should return 0 for not a number', async () => {
+		const number = 'asassasa'
+
+		const result = Sanitizer.sanitizeNumber(number)
+
+		expect(typeof result).toBe('number')
+		expect(result).toBe(0)
+	})
 })

@@ -1,12 +1,14 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import jwt, { JwtPayload } from 'jsonwebtoken'
+import config from '../../config'
 import { Roles } from '../enum/Roles'
 
 export default async function AdminAuth(req: Request, res: Response, next: NextFunction) {
-	const authSecret = <string>process.env.AUTH_SECRET
+	const authSecret = <string>config.AUTH_SECRET
 	try {
 		const authHeader = req.headers.authorization
+
 		if (!authHeader) {
 			return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Token não informado!' })
 		}
@@ -24,7 +26,7 @@ export default async function AdminAuth(req: Request, res: Response, next: NextF
 				if (!decoded) return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Token inválido!' })
 				if (!decoded.role || decoded.role != Roles.ADMIN) return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Não autorizado para esta ação' })
 			} catch (error) {
-				return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Ocorreu um erro, contate o administrador!' })
+				return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Não autorizado' })
 			}
 		} else {
 			return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Ocorreu um erro, contate o administrador!' })

@@ -4,7 +4,7 @@ import { inject, injectable } from 'inversify'
 import ValidationError from '../../../core/errors/Types/ValidationError'
 import { failResponse, successResponse } from '../../../core/shared/Response'
 import { Types } from '../../../di/types'
-import { ICalculateQuoteRequestDTO } from './CalculateQuoteDTO'
+import Sanitizer from '../../validators/Common/Sanitizer'
 import { CalculateQuoteUseCase } from './CalculateQuoteUseCase'
 
 @injectable()
@@ -15,10 +15,18 @@ export class CalculateQuoteController {
 	) {}
 
 	async handle(req: Request, res: Response): Promise<Response> {
-		const data = req.body as ICalculateQuoteRequestDTO
-
 		try {
-			const result = await this.calculateQuoteUseCase.execute(data)
+			const age = Sanitizer.sanitizeNumber(req.body.age)
+			const occupationCode = Sanitizer.sanitizeString(req.body.occupationCode)
+			const capital = Sanitizer.sanitizeNumber(req.body.capital)
+			const coverages = Sanitizer.sanitizeStringList(req.body.coverages)
+
+			if (!age) throw new ValidationError('Idade é obrigatória')
+			if (!occupationCode) throw new ValidationError('Ocupação é obrigatória')
+			if (!capital) throw new ValidationError('Capital é obrigatório')
+			if (!coverages.length) throw new ValidationError('Ao menos uma cobertura é obrigatória')
+
+			const result = await this.calculateQuoteUseCase.execute({ age, occupationCode, capital, coverages })
 
 			return res.status(StatusCodes.OK).json(successResponse(result))
 		} catch (err) {
