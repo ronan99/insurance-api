@@ -14,7 +14,7 @@ services:
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
-      retries: 5
+      retries: 10
 
     ports:
       - "3306:3306"
@@ -83,7 +83,7 @@ services:
     networks:
       - insuranceapi
     environment:
-      APPLY_SEED: false
+      APPLY_SEED: true
     deploy:
       resources:
         limits:
