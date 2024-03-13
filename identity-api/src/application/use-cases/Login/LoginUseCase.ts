@@ -29,8 +29,12 @@ export class LoginUseCase {
 		})
 
 		return {
-			access_token: token,
-			expires_in: 3600,
+			user: {
+				userId: user.id,
+				username: user.username,
+				role: user.role,
+			},
+			token: token,
 		}
 	}
 }

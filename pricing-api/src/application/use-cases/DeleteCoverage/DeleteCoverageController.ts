@@ -16,9 +16,8 @@ export class DeleteCoverageController {
 	async handle(req: Request, res: Response): Promise<Response> {
 		const { id } = req.params
 
-		if (!id) return res.status(StatusCodes.BAD_REQUEST).json(failResponse('Id obrigatório', StatusCodes.BAD_REQUEST))
-
 		try {
+			if (!id) throw new ValidationError('Id obrigatório', StatusCodes.BAD_REQUEST)
 			const result = await this.deleteCoverageUseCase.execute(id)
 
 			return res.status(StatusCodes.OK).json(successResponse(result))

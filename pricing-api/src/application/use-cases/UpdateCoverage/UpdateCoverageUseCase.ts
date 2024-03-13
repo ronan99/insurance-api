@@ -16,7 +16,7 @@ export class UpdateCoverageUseCase {
 		const coverageAlreadyExists = await this.coverageRepository.findByIdWithDeleted(id)
 
 		if (!coverageAlreadyExists) {
-			throw new ValidationError('Cobertura não encontrada', StatusCodes.BAD_REQUEST)
+			throw new ValidationError('Cobertura não encontrada', StatusCodes.NOT_FOUND)
 		}
 		let alreadyHasWithName = null
 		if (data.name) {

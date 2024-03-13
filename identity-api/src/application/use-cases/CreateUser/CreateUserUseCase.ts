@@ -16,6 +16,10 @@ export class CreateUserUseCase {
 	) {}
 
 	async execute(data: ICreateUserRequestDTO): Promise<ICreateUserResponseDTO> {
+		if (!data.username) throw new ValidationError('Nome de usuário é obrigatório')
+		if (!data.password) throw new ValidationError('Senha do usuário é obrigatória')
+		if (!data.role) throw new ValidationError('Função do usuário é obrigatório')
+
 		const userAlreadyExists = await this.usersRepository.findByUsername(data.username)
 
 		const passValidator = new PasswordValidator()

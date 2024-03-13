@@ -15,14 +15,14 @@ export class LoginController {
 	) {}
 
 	async handle(req: Request, res: Response): Promise<Response> {
-		const { username, password } = req.body
-
 		try {
-			const data = {
-				username: Sanitizer.sanitizeString(username),
-				password: Sanitizer.sanitizeString(password),
-			}
-			const result = await this.loginUseCase.execute(data)
+			const username = Sanitizer.sanitizeString(req.body.username)
+			const password = Sanitizer.sanitizeString(req.body.password)
+
+			if (!username) throw new ValidationError('Nome de usuário é obrigatório')
+			if (!password) throw new ValidationError('Senha é obrigatória')
+
+			const result = await this.loginUseCase.execute({ username, password })
 
 			return res.status(StatusCodes.CREATED).json(successResponse(result))
 		} catch (err) {

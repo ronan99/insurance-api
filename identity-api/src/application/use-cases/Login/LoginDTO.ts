@@ -4,6 +4,12 @@ export interface ILoginRequestDTO {
 }
 
 export interface ILoginResponseDTO {
-	access_token: string
-	expires_in: number
+	user: User
+	token: string
+}
+
+type User = {
+	userId: string | number
+	username: string
+	role: string
 }
